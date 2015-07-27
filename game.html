@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<style>
+			#game {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				border: 1px solid #404040;
+			}
+			#message {
+				background-color: rgba(150, 0, 0, 0.7);
+				font-size: 5em;
+				font-family: serif;
+				color: white;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				padding: 0;
+				transform: translate(-50%, -50%);
+				width: 1000px;
+				height: 500px;
+				border-radius: 2px;
+				display: none;
+			}
+
+			#message p {
+				position: absolute;
+				margin: 0;
+				padding: 0;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+			}
+		</style>
+		<script src="config.js"></script>
+		<script src="vector.js"></script>
+		<script src="classes.js"></script>
+	</head>
+	<body>
+		<canvas id="game" width="1200" height="600"></canvas>
+		<div id="message">
+			<p></p>
+		</div>
+		<script src="game.js"></script>
+	</body>
+</html>
