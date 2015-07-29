@@ -7,6 +7,7 @@ function toArray(obj) {
 function Vector(x, y) {
 	this.x = x;
 	this.y = y;
+	return this;
 }
 
 //Adds any number of vectors

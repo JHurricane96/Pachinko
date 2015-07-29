@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8" />
 		<style>
-			#game {
+			canvas {
 				position: absolute;
 				top: 50%;
 				left: 50%;
@@ -34,16 +34,22 @@
 				left: 50%;
 				transform: translate(-50%, -50%);
 			}
+			img {
+				display: none;
+			}
 		</style>
 		<script src="config.js"></script>
 		<script src="vector.js"></script>
 		<script src="classes.js"></script>
 	</head>
+	<div id="fps"></div>
 	<body>
-		<canvas id="game" width="1200" height="600"></canvas>
+		<canvas id="player" width="1200" height="600"></canvas>
+		<canvas id="background" width="1200" height="600"></canvas>
 		<div id="message">
 			<p></p>
 		</div>
 		<script src="game.js"></script>
+		<img id="evil1" src="./images/evil1.jpg"></img>
 	</body>
 </html>
