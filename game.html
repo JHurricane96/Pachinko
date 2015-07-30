@@ -11,7 +11,7 @@
 				border: 1px solid #404040;
 			}
 			#message {
-				background-color: rgba(150, 0, 0, 0.7);
+				background-color: rgba(100, 50, 20, 0.7);
 				font-size: 5em;
 				font-family: serif;
 				color: white;
@@ -34,6 +34,24 @@
 				left: 50%;
 				transform: translate(-50%, -50%);
 			}
+			#replay {
+				position: absolute;
+				left: 50%;
+				top: 65%;
+				transform: translate(-50%, 0);
+				background-color: transparent;
+				border-radius: 3px;
+				border: 1px solid white;
+				padding: 10px;
+				color: white;
+				font-size: 0.5em;
+				transition: 0.2s 0.05s ease;
+			}
+			#replay:hover {
+				background-color: rgba(0, 150, 0,  0.5);
+				border: 1px solid black;
+				cursor: pointer;
+			}
 			img {
 				display: none;
 			}
@@ -42,14 +60,18 @@
 		<script src="vector.js"></script>
 		<script src="classes.js"></script>
 	</head>
-	<div id="fps"></div>
 	<body>
 		<canvas id="player" width="1200" height="600"></canvas>
 		<canvas id="background" width="1200" height="600"></canvas>
 		<div id="message">
 			<p></p>
+			<button id="replay">Replay</button>
 		</div>
 		<script src="game.js"></script>
 		<img id="evil1" src="./images/evil1.jpg"></img>
+		<img id="evil2" src="./images/evil2.jpg"></img>
+		<img id="evil3" src="./images/evil3.jpg"></img>
+		<img id="prize1" src="./images/prize1.jpg"></img>
+		<img id="prize2" src="./images/prize2.jpg"></img>
 	</body>
 </html>

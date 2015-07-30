@@ -1,36 +1,21 @@
 var canvasPlayer = document.getElementById("player");
 var canvasBackground = document.getElementById("background");
+var replayButton = document.getElementById("replay");
 var context = canvasPlayer.getContext("2d");
 var cxBackground = canvasBackground.getContext("2d");
 var container;
 var player;
 var stones = [];
 var gameLoop;
-var score = 0;
-var doneState = 0;
-var launched = 0;
+var score;
+var doneState;
+var launched;
 var prevTime;
-//var initialUpwardThrust = -15.0;
+var endGame;
 
 function control(event) {
-	//-4 is one
-	//-1 is two
-	//-8 is three
-	//-7.09 is four
-	//-6 is five
 	if (event.keyCode == 32) {
 		launched = 1;
-		/*var vel = Math.floor(Math.random() * 5) + 1;
-		if (vel == 1)
-			player.velocity = new Vector(-4, -35);
-		else if (vel == 2)
-			player.velocity = new Vector(-1, -35);
-		else if (vel == 3)
-			player.velocity = new Vector(-8, -35);
-		else if (vel == 4)
-			player.velocity = new Vector(-7.09, -35);
-		else
-			player.velocity = new Vector(-6, -35);*/
 		player.velocity = new Vector(-20, -20);
 		player.position.y = Screen.height - player.size - Render.lineWidth - 1;
 		window.removeEventListener("keydown", control);
@@ -41,6 +26,11 @@ function control(event) {
 function initialize() {
 	var evilsCount = 0, prizesCount = 0, contents = [], contentTemp;
 	doneState = 0;
+	score = 0;
+	doneState = 0;
+	launched = 0;
+	endGame = "indeterminate";
+	document.getElementById("message").style.display = "none";
 	prevTime = Date.now();
 	var i;
 	for (i = 0; i < 5; ++i) {
@@ -116,23 +106,27 @@ function reInitialize() {
 
 function update() {
 	var newTime;
-	if (player.position.y >= Screen.height - player.size - Render.lineWidth && player.velocity.mag() <= 0.7143 && doneState == 1) {
+	if (player.position.y >= Screen.height - player.size - Render.lineWidth && doneState == 1 && player.velocity.y > 0) {
 		doneState = 2;
 		if (launched) {
 			if (score < 2 && player.checkContainerContents(container) == "evil") {
 				score++;
-				console.log(score);
 				reInitialize();
 			}
 			else if (score == 2 && player.checkContainerContents(container) == "prize") {
 				score++;
-				cleanup("You win");
+				//cleanup("You win");
+				endGame = "win";
+				return;
 			}
-			else
-				cleanup("You lose");
+			else {
+				//cleanup("You lose");
+				endGame = "lose";
+				return;
+			}
 		}
 	}
-	if (player.position.x + player.size + Render.lineWidth/2 + Render.playerLineWidth < container.smallWalls[4].x) {
+	if (player.position.x + player.size + Render.lineWidth/2 + Render.playerLineWidth < container.smallWalls[4].x && container.smallWalls[4].height != 460) {
 		container.smallWalls[4].height = 460;
 		container.redraw = true;
 	}
@@ -140,50 +134,10 @@ function update() {
 	stones.forEach(function (stone) {
 		player.checkCollisionWithStone(stone);
 	});
-	//Gravity
 	newTime = Date.now();
 	player.velocity.add(new Vector(0, 5).mult(1/(newTime - prevTime)));
 	player.position.add(Vector.mult(player.velocity, 10/(newTime - prevTime)));
 	prevTime = Date.now();
-}
-
-function render() {
-	context.clearRect(0, 0, Screen.width, Screen.height);
-	if (container.redraw) {
-		renderContainer();
-		container.redraw = false;
-	}
-	context.strokeStyle = "black";
-	context.beginPath();
-	context.lineWidth = Render.playerLineWidth;
-	context.arc(player.position.x, player.position.y, player.size, 0, Math.PI * 2);
-	context.stroke();
-	context.fillStyle = "grey";
-	stones.forEach(function (stone) {
-		context.beginPath();
-		context.arc(stone.position.x, stone.position.y, stone.size, 0, Math.PI * 2);
-		context.fill();
-		context.stroke();
-	});
-	document.getElementById('fps').innerHTML = window.mozPaintCount / (Date.now() - startTime) * 1000;
-}
-
-function cleanup(message) {
-	console.log(message);
-	document.querySelector("#message p").innerHTML = message;
-	document.getElementById("message").style.display = "block";
-}
-
-function mainLoop() {
-	requestAnimationFrame(mainLoop);
-	update();
-	render();
-}
-
-function main() {
-	initialize();
-	gameLoop = requestAnimationFrame(mainLoop);
-	startTime = Date.now();
 }
 
 function renderContainer() {
@@ -199,11 +153,9 @@ function renderContainer() {
 		container.bigWallLeft.x,
 		Screen.height
 	);
-	//cxBackground.stroke();
 	//var xOffset = container.bigWallLeft.x - Render.lineWidth/2;
 	var i;
 	for (i = 0; i < 5; ++i) {
-		//cxBackground.beginPath();
 		if (i == 0) {
 			cxBackground.moveTo(
 				container.bigWallLeft.x,
@@ -216,16 +168,10 @@ function renderContainer() {
 				Screen.height - Render.lineWidth/2
 			);
 		}
-/*		if (container.contents[i] == "evil")
-			cxBackground.strokeStyle = "red";
-		else
-			cxBackground.strokeStyle = "blue";*/
 		cxBackground.lineTo(
 			container.smallWalls[i].x,
 			Screen.height - Render.lineWidth/2
 		);
-		//cxBackground.stroke();
-		//cxBackground.beginPath();
 		cxBackground.strokeStyle = "rgb(100, 50, 20)";
 		cxBackground.moveTo(
 			container.smallWalls[i].x,
@@ -239,9 +185,7 @@ function renderContainer() {
 			container.smallWalls[i].x,
 			Screen.height - Render.lineWidth/2
 		);
-		//cxBackground.stroke();
 	}
-	//cxBackground.beginPath();
 	cxBackground.strokeStyle = "rgb(100, 50, 20)";
 	cxBackground.moveTo(
 		container.smallWalls[4].x,
@@ -269,18 +213,76 @@ function renderContainer() {
 		Screen.height - container.bigWallRight.height
 	);
 	cxBackground.stroke();
-	console.log(sprites["evil1"]);
+	var evilsCount = 0;
+	var prizesCount = 0;
 	container.contents.forEach(function (content, i) {
 		if (content == "evil") {
 			cxBackground.drawImage(
-				sprites["evil1"],
-				container.smallWalls[i].x - Render.imgWidth*1.5,
+				sprites["evil" + ++evilsCount],
+				container.smallWalls[i].x - Render.imgWidth*1.5 + Render.lineWidth/2,
+				Screen.height - Render.lineWidth - Render.imgHeight,
+				Render.imgWidth,
+				Render.imgHeight
+			);
+		}
+		else if (content == "prize") {
+			cxBackground.drawImage(
+				sprites["prize" + ++prizesCount],
+				container.smallWalls[i].x - Render.imgWidth*1.5 + Render.lineWidth/2,
 				Screen.height - Render.lineWidth - Render.imgHeight,
 				Render.imgWidth,
 				Render.imgHeight
 			);
 		}
 	});
+	cxBackground.lineWidth = Render.playerLineWidth;
+	cxBackground.strokeStyle = "black";
+	cxBackground.fillStyle = "grey";
+	stones.forEach(function (stone) {
+		cxBackground.beginPath();
+		cxBackground.arc(stone.position.x, stone.position.y, stone.size, 0, Math.PI * 2);
+		cxBackground.fill();
+		cxBackground.stroke();
+	});
+}
+
+function render() {
+	context.clearRect(0, 0, Screen.width, Screen.height);
+	if (container.redraw) {
+		renderContainer();
+		container.redraw = false;
+	}
+	context.strokeStyle = "black";
+	context.beginPath();
+	context.lineWidth = Render.playerLineWidth;
+	context.arc(player.position.x, player.position.y, player.size, 0, Math.PI * 2);
+	context.stroke();
+}
+
+function cleanup(message) {
+	document.querySelector("#message p").innerHTML = message;
+	document.getElementById("message").style.display = "block";
+}
+
+function mainLoop() {
+	if (endGame == "win") {
+		cleanup("You win");
+	}
+	else if (endGame == "lose") {
+		cleanup("You lose");
+	}
+	else {
+		requestAnimationFrame(mainLoop);
+		update();
+		render();
+	}
+}
+
+function main() {
+	initialize();
+	gameLoop = requestAnimationFrame(mainLoop);
+	startTime = Date.now();
 }
 
 window.onload =  main;
+replay.addEventListener("click", main);

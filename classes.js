@@ -70,8 +70,7 @@ Player.prototype.checkCollisionWithStone = function (stone) {
 }
 
 Player.prototype.checkContainerContents = function (container) {
-	//console.log(Math.floor(((container.bigWallLeft.x - this.position.x) * 5/(container.bigWallLeft.x - container.bigWallRight.x)) + 0.5));
-	return container.contents[Math.floor(((container.bigWallLeft.x - this.position.x) * 5/(container.bigWallLeft.x - container.bigWallRight.x)) + 0.5)];
+	return container.contents[Math.floor((this.position.x - container.bigWallLeft.x) * 5/(container.smallWalls[4].x - container.bigWallLeft.x))];
 }
 
 function Stone(x, y, size) {
