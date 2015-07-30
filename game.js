@@ -29,6 +29,7 @@ function initialize() {
 	score = 0;
 	doneState = 0;
 	launched = 0;
+	stones = [];
 	endGame = "indeterminate";
 	document.getElementById("message").style.display = "none";
 	prevTime = Date.now();
